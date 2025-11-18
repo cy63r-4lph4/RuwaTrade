@@ -1,3 +1,4 @@
+import { api, authApi } from "@/lib/api";
 import axios from "axios";
 import { useState } from "react";
 
@@ -6,7 +7,7 @@ export const useSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const signUp = async (
+  const signup = async (
     email: string,
     password: string,
     password_confirmation: string,
@@ -21,7 +22,7 @@ export const useSignUp = () => {
     setError(null);
 
     try {
-      const response = await axios.post("/auth/register", {
+      const response = await api.post(authApi("/auth/register"), {
         email,
         password,
         name,
@@ -42,5 +43,5 @@ export const useSignUp = () => {
     }
   };
 
-  return { loading, error, signUp };
+  return { signup, loading, error, success };
 };
