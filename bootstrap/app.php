@@ -24,6 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'is_admin' => \App\Http\Middleware\IsAdmin::class,
             'admin_token' => \App\Http\Middleware\AdminTokenAuth::class,
         ]);
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
