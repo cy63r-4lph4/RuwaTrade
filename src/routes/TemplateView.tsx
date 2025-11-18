@@ -1,88 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import type { DisplayTemplate } from "@/components/Interfaces";
-import { addToCart, api, removeFromCart } from "@/lib/api";
-import toast from "react-hot-toast";
-import { useCart, useLibrary } from "@/hooks/global";
-// import CartDrawer from "@/components/CartDrawer";
-import { FiArrowLeft } from "react-icons/fi";
-import { ShoppingCart } from "lucide-react";
-import { CUSTOMER_KEY, GUEST_CART_KEY } from "@/components/constants";
+import { api } from "@/lib/api";
 
-export function TemplateDetail() {
+import { FiArrowLeft } from "react-icons/fi";
+
+export function TemplateView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   const [template, setTemplate] = useState<DisplayTemplate | null>(null);
   const [mainImage, setMainImage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [removingId, setRemovingId] = useState<number | null>(null);
-  const { templates: libraryTemplates } = useLibrary();
-
-  const { items: cart, isLoggedIn, addToGuestCart, fetchCart } = useCart();
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  const addItem = async (template: DisplayTemplate) => {
-    const alreadyInCart = cart.some((item) => item.id === template.id);
-
-    if (alreadyInCart) {
-      toast.error(`'${template.title}' is already in Cart`);
-      return;
-    }
-
-    try {
-      if (isLoggedIn) {
-        await addToCart(template.id);
-        await fetchCart();
-      } else {
-        addToGuestCart(template);
-      }
-
-      toast.success(`'${template.title}' has been added to Cart`);
-    } catch (err) {
-      toast.error("Failed to add to cart");
-    }
-  };
-  const isInCart = (id: number) => cart.some((item) => item.id === id);
-  const isInLibrary = (id: number) =>
-    libraryTemplates.some((item) => item.id === id);
-
-  const inLibrary =
-    template?.id !== undefined ? isInLibrary(template.id) : false;
-  const inCart = template?.id !== undefined ? isInCart(template.id) : false;
-  const disabled = inCart || inLibrary;
-
-  const removeItem = async (id: number) => {
-    setRemovingId(id);
-
-    try {
-      const token = localStorage.getItem(CUSTOMER_KEY);
-
-      if (!token) {
-        const current = JSON.parse(
-          localStorage.getItem(GUEST_CART_KEY) || "[]"
-        );
-        const updated = current.filter(
-          (item: DisplayTemplate) => item.id !== id
-        );
-        localStorage.setItem(GUEST_CART_KEY, JSON.stringify(updated));
-        fetchCart?.();
-
-        toast.success("Item removed from cart (guest)");
-        return;
-      }
-
-      await removeFromCart(id);
-      await fetchCart();
-      toast.success("Item removed from cart");
-    } catch (err) {
-      toast.error("Failed to remove item");
-    } finally {
-      setRemovingId(null);
-    }
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -91,7 +21,6 @@ export function TemplateDetail() {
         const res = await api.get(`/templates/${id}`);
         const data = res.data as DisplayTemplate;
 
-        // Combine thumbnail and other images uniquely
         const allImages = [
           ...(data.thumbnail ? [{ id: -1, path: data.thumbnail }] : []),
           ...(data.images || []),
@@ -187,51 +116,13 @@ export function TemplateDetail() {
                 <span className="font-medium">Tags:</span>{" "}
                 {template.tags?.join(", ") || "N/A"}
               </p>
-            </div>
-
-            <div className="flex items-center justify-between mt-8">
-              <p className="text-4xl font-extrabold text-indigo-600">
+               <p className="text-4xl font-extrabold text-indigo-600">
                 GH₵ {template.price}
               </p>
-              <Button
-                disabled={disabled}
-                className="text-lg px-6 py-3 rounded-full shadow-md hover:scale-105 transition"
-                onClick={() => !disabled && addItem(template)}
-              >
-                {inCart ? "In Cart" : inLibrary ? "In Library" : "Add to Cart"}
-              </Button>
             </div>
           </motion.div>
         </div>
       </div>
-
-      {cart.length > 0 && (
-        <Button
-          onClick={() => setIsCartOpen(true)}
-          className="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-4 rounded-full shadow-lg flex items-center gap-3"
-        >
-          <ShoppingCart className="w-6 h-6" />
-          <span className="bg-white text-indigo-700 font-bold text-sm rounded-full px-2.5 py-0.5">
-            {cart.length}
-          </span>
-        </Button>
-      )}
-
-      {/* Backdrop */}
-      {isCartOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setIsCartOpen(false)}
-        />
-      )}
-
-      {/* <CartDrawer
-        cart={cart}
-        handleRemove={removeItem}
-        removingId={removingId}
-        isCartOpen={isCartOpen}
-        setIsCartOpen={setIsCartOpen}
-      /> */}
     </div>
   );
 }

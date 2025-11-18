@@ -1,227 +1,309 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Filter, ShoppingCart } from "lucide-react";
-import { HeroSection } from "@/components/Hero";
-import { Link } from "react-router-dom";
+// import { useState } from "react";
+// import { motion } from "framer-motion";
+// import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
+// import { Search, Filter, ShoppingCart, BookOpen } from "lucide-react";
+// import { HeroSection } from "@/components/Hero";
+// import { Link } from "react-router-dom";
 
-type Template = {
-  id: number;
-  title: string;
-  category: string;
-  price: number;
-  thumbnail: string;
-};
+// import { useEffect } from "react";
+// import type { DisplayTemplate } from "@/components/Interfaces";
+// import { addToCart, api, removeFromCart } from "@/lib/api";
+// import CartDrawer from "@/components/CartDrawer";
+// import toast from "react-hot-toast";
+// import { useCart, useLibrary } from "@/hooks/global";
+// import { LibraryModal } from "@/components/Library";
+// import { CUSTOMER_KEY, GUEST_CART_KEY } from "@/components/constants";
 
-const sampleTemplates: Template[] = [
-  {
-    id: 1,
-    title: "Modern HTML Template",
-    category: "HTML",
-    price: 10,
-    thumbnail: "images/business-2.png",
-  },
-  {
-    id: 2,
-    title: "Professional Excel Sheet",
-    category: "Excel",
-    price: 5,
-    thumbnail: "images/bbt.png",
-  },
-  {
-    id: 3,
-    title: "Creative PowerPoint Deck",
-    category: "PPT",
-    price: 8,
-    thumbnail: "images/green.webp",
-  },
-  {
-    id: 4,
-    title: "Beautiful Educational Presentation",
-    category: "PPT",
-    price: 8,
-    thumbnail: "images/edup.jpg",
-  },
-  {
-    id: 5,
-    title: "Learning Management System Template",
-    category: "HTML",
-    price: 8,
-    thumbnail: "images/lms.jpg",
-  },
-  {
-    id: 6,
-    title: "Dashboard Template",
-    category: "Excel",
-    price: 8,
-    thumbnail: "images/dbt.png",
-  },
-  {
-    id: 7,
-    title: "A Professional Resume Template",
-    category: "MSWord",
-    price: 8,
-    thumbnail: "images/resume.jpg",
-  },
-  {
-    id: 8,
-    title: "Ultimate Sales Tracking Template",
-    category: "Excel",
-    price: 8,
-    thumbnail: "images/ust.webp",
-  },
-];
+// export function HomePage() {
+//   const [search, setSearch] = useState("");
+//   const [isCartOpen, setIsCartOpen] = useState(false);
 
-export function HomePage() {
-  const [search, setSearch] = useState("");
-  const [cart, setCart] = useState<Template[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+//   const { items: cart, isLoggedIn, addToGuestCart, fetchCart } = useCart();
 
-  const filteredTemplates = sampleTemplates.filter((t) =>
-    t.title.toLowerCase().includes(search.toLowerCase())
-  );
+//   const addItem = async (template: DisplayTemplate) => {
+//     const alreadyInCart = cart.some((item) => item.id === template.id);
 
-  const addToCart = (template: Template) => {
-    if (!cart.some((item) => item.id === template.id)) {
-      setCart([...cart, template]);
-    }
-  };
+//     if (alreadyInCart) {
+//       toast.error(`'${template.title}' is already in Cart`);
+//       return;
+//     }
 
-  const removeFromCart = (id: number) => {
-    setCart(cart.filter((item) => item.id !== id));
-  };
+//     try {
+//       if (isLoggedIn) {
+//         await addToCart(template.id);
+//         await fetchCart();
+//       } else {
+//         addToGuestCart(template);
+//       }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e0f2fe] via-[#f0f4ff] to-[#dbeafe] p-6 relative overflow-hidden">
-      <HeroSection />
+//       toast.success(`'${template.title}' has been added to Cart`);
+//     } catch (err) {
+//       toast.error("Failed to add to cart");
+//     }
+//   };
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 mt-10">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center sm:text-left">
-          Find the Perfect Template
-        </h2>
+//   const [templates, setTemplates] = useState<DisplayTemplate[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+//   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+//   const [removingId, setRemovingId] = useState<number | null>(null);
+//   const { templates: libraryTemplate } = useLibrary();
 
-        <div className="relative w-full sm:w-2/3 max-w-xl">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <Input
-            className="pl-12 pr-5 py-3 text-base sm:text-lg rounded-full border border-gray-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all bg-white"
-            placeholder="Search templates..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+//   const isInCart = (id: number) => cart.some((item) => item.id === id);
+//   const isInLibrary = (id: number) =>
+//     libraryTemplate.some((item) => item.id === id);
 
-        <Button className="rounded-full shadow-md px-6 py-3 text-lg">
-          <Filter className="mr-2" /> Filter
-        </Button>
-      </div>
+//   useEffect(() => {
+//     api
+//       .get("/templates")
+//       .then((res) => {
+//         setTemplates(res.data);
+//         setLoading(false);
+//       })
+//       .catch(() => {
+//         setError("Failed to load templates");
+//         setLoading(false);
+//       });
+//   }, []);
 
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-8">
-        {filteredTemplates.map((template) => (
-          <motion.div
-            key={template.id}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white rounded-3xl shadow-lg overflow-hidden transition-all"
-          >
-            <Link to={`/template/${template.id}`}>
-              <img
-                src={template.thumbnail}
-                alt={template.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-5">
-                <h2 className="text-2xl font-bold mb-2 text-gray-800">
-                  {template.title}
-                </h2>
-                <p className="text-sm text-gray-500 mb-1">
-                  Category: {template.category}
-                </p>
-                <p className="text-xl font-semibold text-indigo-600 mb-4">
-                  ${template.price}
-                </p>
-              </div>
-            </Link>
-            <div className="pt-0 pb-5 px-5">
-              <Button
-                onClick={() => addToCart(template)}
-                className="w-full rounded-2xl"
-              >
-                Add to Cart
-              </Button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+//   const filteredTemplates = templates.filter((t) =>
+//     t.title.toLowerCase().includes(search.toLowerCase())
+//   );
 
-      {/* Floating Cart Button */}
-      {cart.length > 0 && (
-        <Button
-          className="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white text-lg rounded-full px-5 py-4 shadow-lg flex items-center gap-3 transition-colors duration-300"
-          onClick={() => setIsCartOpen(true)}
-        >
-          <ShoppingCart style={{ width: 28, height: 28 }} />
+//   const removeItem = async (id: number) => {
+//     setRemovingId(id);
 
-          <span className="bg-white text-indigo-700 font-bold text-sm rounded-full px-2.5 py-0.5 select-none">
-            {cart.length}
-          </span>
-        </Button>
-      )}
+//     try {
+//       const token = localStorage.getItem(CUSTOMER_KEY);
 
-      {/* Backdrop */}
-      {isCartOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={() => setIsCartOpen(false)}
-        />
-      )}
+//       if (!token) {
+//         const current = JSON.parse(
+//           localStorage.getItem(GUEST_CART_KEY) || "[]"
+//         );
+//         const updated = current.filter(
+//           (item: DisplayTemplate) => item.id !== id
+//         );
+//         localStorage.setItem(GUEST_CART_KEY, JSON.stringify(updated));
+//         fetchCart?.();
 
-      {/* Slide-in Cart Drawer */}
-      <motion.div
-        initial={{ x: "100%" }}
-        animate={{ x: isCartOpen ? 0 : "100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white shadow-2xl z-50 p-6 overflow-y-auto"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-3xl font-bold text-indigo-700">Your Cart</h3>
-          <button
-            onClick={() => setIsCartOpen(false)}
-            className="text-gray-500 hover:text-gray-700 text-3xl"
-          >
-            &times;
-          </button>
-        </div>
-        <ul>
-          {cart.map((item, index) => (
-            <li
-              key={index}
-              className="flex justify-between items-center py-2 text-lg border-b border-gray-100"
-            >
-              <div>
-                <p>{item.title}</p>
-                <button
-                  className="text-sm text-red-500 hover:underline"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Remove
-                </button>
-              </div>
-              <span className="font-semibold">${item.price}</span>
-            </li>
-          ))}
-        </ul>
+//         toast.success("Item removed from cart (guest)");
+//         return;
+//       }
 
-        <div className="flex justify-between font-bold text-xl mt-6">
-          <span>Total</span>
-          <span>
-            ${cart.reduce((total, item) => total + item.price, 0).toFixed(2)}
-          </span>
-        </div>
-        <Button className="mt-6 w-full py-3 text-lg rounded-full">
-          Proceed to Payment
-        </Button>
-      </motion.div>
-    </div>
-  );
-}
+//       await removeFromCart(id);
+//       await fetchCart();
+//       toast.success("Item removed from cart");
+//     } catch (err) {
+//       toast.error("Failed to remove item");
+//     } finally {
+//       setRemovingId(null);
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex flex-col items-center justify-center space-y-8 bg-gradient-to-b from-white via-blue-50 to-indigo-50">
+//         <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+//         <p className="text-indigo-700 font-medium">Loading templates…</p>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <>
+//         <HeroSection />
+
+//         <div className="min-h-screen flex flex-col items-center justify-center space-y-4 bg-gradient-to-b from-white via-blue-50 to-indigo-50">
+//           <img
+//             src="/images/cancel.svg"
+//             alt="error"
+//             className="w-40 h-40 opacity-70"
+//           />
+//           <p className="text-red-600 font-semibold">{error}</p>
+//         </div>
+//       </>
+//     );
+//   }
+//   const hasTemplates = templates.length > 0;
+
+//   return (
+//     <div className="bg-gradient-to-b from-white via-blue-50 to-indigo-50 min-h-screen pb-24">
+//       {/* ▸ Compact hero if we already have templates */}
+//       <HeroSection compact={hasTemplates} />
+
+//       {/* Empty‑state if no templates at all */}
+//       {!hasTemplates && (
+//         <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
+//           <img
+//             src="/images/void.svg"
+//             alt="No templates"
+//             className="w-40 h-40 opacity-80"
+//           />
+//           <h2 className="text-3xl font-semibold text-indigo-800">
+//             No templates yet
+//           </h2>
+//           <p className="max-w-sm text-gray-600">
+//             We're working hard to bring you premium content. Check back soon or
+//             subscribe for updates!
+//           </p>
+//         </div>
+//       )}
+//       {hasTemplates && (
+//         <>
+//           {/* Search & Filters */}
+//           <div className="max-w-7xl mx-auto px-6 py-12">
+//             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+//               <h2 className="text-4xl font-bold text-indigo-900 text-center md:text-left">
+//                 Premium Templates for Any Project
+//               </h2>
+
+//               <div className="flex w-full md:max-w-xl items-center space-x-3">
+//                 <div className="relative flex-1">
+//                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+//                   <Input
+//                     className="pl-11 pr-4 py-2.5 text-sm rounded-full border-gray-300 shadow focus:ring-indigo-500 focus:border-indigo-500"
+//                     placeholder="Search templates..."
+//                     value={search}
+//                     onChange={(e) => setSearch(e.target.value)}
+//                   />
+//                 </div>
+//                 <Button
+//                   variant="outline"
+//                   className="rounded-full px-4 py-2 flex items-center"
+//                 >
+//                   <Filter className="w-4 h-4 mr-2" />
+//                   Filter
+//                 </Button>
+//               </div>
+//               {isLoggedIn && (
+//                 <div className="flex items-center gap-3">
+//                   <Button
+//                     onClick={() => setIsLibraryOpen(true)}
+//                     className={`flex items-center gap-2 border px-4 py-2 rounded-full ${
+//                       libraryTemplate.length > 0
+//                         ? "border-indigo-600 text-indigo-700 bg-indigo-50 hover:bg-white hover:text-purple-500"
+//                         : "border-gray-300 text-gray-700"
+//                     }`}
+//                   >
+//                     <BookOpen className="w-4 h-4" />
+//                     Library
+//                     {libraryTemplate.length > 0 && (
+//                       <span className="ml-2 text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-full">
+//                         {libraryTemplate.length}
+//                       </span>
+//                     )}
+//                   </Button>
+//                 </div>
+//               )}
+//             </div>
+//           </div>
+
+//           {/* Template Grid */}
+//           {filteredTemplates.length === 0 ? (
+//             <p className="text-center text-gray-500 mt-20">
+//               No templates match&nbsp;
+//               <span className="font-semibold">&ldquo;{search}&rdquo;</span>
+//             </p>
+//           ) : (
+//             <div className="max-w-8xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 px-6">
+//               {filteredTemplates.map((template) => {
+//                 const inLibrary = isInLibrary(template.id);
+//                 const inCart = isInCart(template.id);
+//                 const disabled = inCart || inLibrary;
+//                 return (
+//                   <motion.div
+//                     key={template.id}
+//                     whileHover={{
+//                       y: -4,
+//                       boxShadow: "0 12px 25px rgba(0,0,0,0.15)",
+//                     }}
+//                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
+//                     className="bg-white rounded-3xl overflow-hidden border border-gray-100"
+//                   >
+//                     <Link to={`/template/${template.id}`} className="block">
+//                       <div className="relative">
+//                         <img
+//                           src={template.thumbnail}
+//                           alt={template.title}
+//                           className="w-full h-52 object-cover"
+//                         />
+//                         <span className="absolute top-3 left-3 backdrop-blur-md bg-indigo-600/80 text-white text-xs px-3 py-1 rounded-full font-medium shadow">
+//                           {template.category}
+//                         </span>
+//                       </div>
+//                       <div className="p-5 space-y-1">
+//                         <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
+//                           {template.title}
+//                         </h3>
+//                         <p className="text-sm text-gray-500">
+//                           Price:{" "}
+//                           <span className="font-bold text-indigo-600">
+//                             GH₵ {template.price}
+//                           </span>
+//                         </p>
+//                       </div>
+//                     </Link>
+//                     <div className="px-5 pb-5">
+//                       <Button
+//                         disabled={disabled}
+//                         onClick={() => !disabled && addItem(template)}
+//                         className={`w-full rounded-full font-medium ${
+//                           disabled
+//                             ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+//                             : "bg-indigo-600 hover:bg-indigo-700 text-white"
+//                         }`}
+//                       >
+//                         {inCart
+//                           ? "In Cart"
+//                           : inLibrary
+//                           ? "In Library"
+//                           : "Add to Cart"}
+//                       </Button>
+//                     </div>
+//                   </motion.div>
+//                 );
+//               })}
+//             </div>
+//           )}
+//         </>
+//       )}
+
+//       {/* Floating Cart */}
+//       {cart.length > 0 && (
+//         <Button
+//           onClick={() => setIsCartOpen(true)}
+//           className="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-4 rounded-full shadow-lg flex items-center gap-3"
+//         >
+//           <ShoppingCart className="w-6 h-6" />
+//           <span className="bg-white text-indigo-700 font-bold text-sm rounded-full px-2.5 py-0.5">
+//             {cart.length}
+//           </span>
+//         </Button>
+//       )}
+
+//       {/* Backdrop */}
+//       {isCartOpen && (
+//         <div
+//           className="fixed inset-0 bg-black/40 z-40"
+//           onClick={() => setIsCartOpen(false)}
+//         />
+//       )}
+
+//       {/* Slide-in Cart Drawer */}
+//       <CartDrawer
+//         cart={cart}
+//         handleRemove={removeItem}
+//         removingId={removingId}
+//         isCartOpen={isCartOpen}
+//         setIsCartOpen={setIsCartOpen}
+//       />
+
+//       <LibraryModal
+//         isOpen={isLibraryOpen}
+//         onClose={() => setIsLibraryOpen(false)}
+//       />
+//     </div>
+//   );
+// }
