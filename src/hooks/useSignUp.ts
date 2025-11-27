@@ -1,4 +1,4 @@
-import { api, authApi } from "@/lib/api";
+import { api, apiRoute, authApi } from "@/lib/api";
 import axios from "axios";
 import { useState } from "react";
 
@@ -7,13 +7,19 @@ export const useSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const signup = async (
-    email: string,
-    password: string,
-    password_confirmation: string,
-    name: string,
-    role = "customer"
-  ) => {
+  const signup = async ({
+    email,
+    password,
+    password_confirmation,
+    name,
+    role = "customer",
+  }: {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    name: string;
+    role?: string;
+  }) => {
     if (password !== password_confirmation) {
       setError("Passwords do not match");
       return;
@@ -22,9 +28,10 @@ export const useSignUp = () => {
     setError(null);
 
     try {
-      const response = await api.post(authApi("/auth/register"), {
+      const response = await api.post("/register", {
         email,
         password,
+        password_confirmation,
         name,
         role,
       });

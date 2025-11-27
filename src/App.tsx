@@ -29,6 +29,7 @@ import AdminLogin from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import { TemplateView } from "./routes/TemplateView";
 import { Navbar } from "./components/NavBar";
+import { OtpVerification } from "./pages/OTP";
 
 // Component wrapper to use hooks like useLocation
 function AppWrapper() {
@@ -59,6 +60,7 @@ function AppWrapper() {
         <Route path="/register-seller" element={<RegisterSeller />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/signin' element={<SignIn />} />
+        <Route path='/verify-otp' element={<OtpVerification />} />
 
         {/* Redirects */}
 
