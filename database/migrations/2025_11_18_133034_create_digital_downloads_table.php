@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('digital_downloads', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('order_item_id')->constrained()->onDelete('cascade');
-    $table->string('download_link'); // Could be a signed URL
-    $table->dateTime('expires_at'); // Expiration
-    $table->timestamps();
-});
+            $table->id();
+            $table->foreignId('order_item_id')->constrained()->onDelete('cascade');
+            $table->string('download_link'); // Could be a signed URL
+            $table->dateTime('expires_at'); // Expiration
+            $table->timestamps();
+        });
 
     }
 

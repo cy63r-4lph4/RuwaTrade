@@ -21,15 +21,12 @@ class CartController extends Controller
         // Replace the 'thumbnail' field with full URL
         $templates->each(function ($template) {
             $template->thumbnail = $template->thumbnail
-                ? asset('storage/' . $template->thumbnail)
+                ? asset('storage/'.$template->thumbnail)
                 : null;
         });
 
         return response()->json($templates);
     }
-
-
-
 
     public function store(Request $request)
     {
@@ -41,29 +38,27 @@ class CartController extends Controller
     }
 
     public function destroy($id)
-{
-    $customerId = auth('api')->id();
+    {
+        $customerId = auth('api')->id();
 
-    $item = CartItem::where('template_id', $id)
-        ->whereHas('cart', function ($query) use ($customerId) {
-            $query->where('customer_id', $customerId);
-        })
-        ->first();
+        $item = CartItem::where('template_id', $id)
+            ->whereHas('cart', function ($query) use ($customerId) {
+                $query->where('customer_id', $customerId);
+            })
+            ->first();
 
-    if (!$item) {
+        if (! $item) {
+            return response()->json([
+                'message' => 'Cart item not found for this customer.',
+            ], 404);
+        }
+
+        $item->delete();
+
         return response()->json([
-            'message' => 'Cart item not found for this customer.',
-        ], 404);
+            'message' => 'Item removed from cart',
+        ]);
     }
-
-    $item->delete();
-
-    return response()->json([
-        'message' => 'Item removed from cart',
-    ]);
-}
-
-
 
     // public function checkout()
     // {

@@ -1,38 +1,26 @@
 <?php
 
-use App\Http\Controllers\Auth\OTPController;
-use App\Http\Controllers\CartController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CustomerTemplateController;
 use App\Http\Controllers\PaystackController;
-
-
-
+use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\Auth\OTPController;
+use Illuminate\Support\Facades\Route;
 
 // Public Routes
-Route::post('/auth/request-otp', [AuthController::class, 'sendOtp']);
-Route::post('/auth/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/admin/login', [AdminAuthController::class, 'login']);
 Route::get('/templates', [TemplateController::class, 'fetch']);
 Route::get('/templates/{id}', [TemplateController::class, 'fetchById']);
 
-
 Route::post('/paystack/initialize', [PaystackController::class, 'initialize']);
 Route::get('/paystack/verify/{reference}', [PaystackController::class, 'verify']);
 
-
 // routes/api.php
-Route::post('/auth/send-otp', [OTPController::class, 'sendOtp']);
+Route::post('/auth/resend-otp', [OTPController::class, 'resendOtp']);
 Route::post('/auth/verify-otp', [OTPController::class, 'verifyOtp']);
-
-
-
-
-
+Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 
 // Authenticated Admin Routes
 Route::middleware('admin_token')->group(function () {
@@ -53,9 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cart', [CartController::class, 'store']);
     Route::delete('/cart/item/{id}', [CartController::class, 'destroy']);
     Route::get('/library', [CustomerTemplateController::class, 'index']);
-        Route::get('/download/{template}', [CustomerTemplateController::class, 'download']);
-
-
+    Route::get('/download/{template}', [CustomerTemplateController::class, 'download']);
 
 });
-

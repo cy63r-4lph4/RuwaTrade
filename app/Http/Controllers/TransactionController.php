@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Transaction;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class TransactionController extends Controller
@@ -14,10 +13,10 @@ class TransactionController extends Controller
         $response = Http::withToken(env('PAYSTACK_SECRET_KEY'))
             ->get("https://api.paystack.co/transaction/verify/{$reference}");
 
-        if ($response->failed() || !$response->json('data')) {
+        if ($response->failed() || ! $response->json('data')) {
             return response()->json([
                 'status' => false,
-                'message' => 'Verification failed or invalid response from Paystack.'
+                'message' => 'Verification failed or invalid response from Paystack.',
             ], 400);
         }
 
@@ -35,7 +34,7 @@ class TransactionController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Transaction already logged.',
-                'transaction' => $existing
+                'transaction' => $existing,
             ]);
         }
 

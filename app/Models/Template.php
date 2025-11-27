@@ -12,13 +12,11 @@ class Template extends Model
     {
         return $this->belongsToMany(Customer::class)->withTimestamps()->withPivot('expires_at');
     }
+
     public function images()
     {
         return $this->hasMany(TemplateImage::class);
     }
     // app/Models/Template.php
 
-
-
 }
-

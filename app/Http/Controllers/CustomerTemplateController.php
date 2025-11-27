@@ -7,11 +7,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Log;
 
-
-
 class CustomerTemplateController extends Controller
 {
-
     public function index(Request $request)
     {
         $customer = $request->user();
@@ -24,16 +21,14 @@ class CustomerTemplateController extends Controller
                     'id' => $template->id,
                     'title' => $template->title,
                     'category' => $template->category,
-                    'thumbnail' => asset('storage/' . $template->thumbnail), // full URL
-                    'file' => asset('storage/' . $template->file_path),     // full file URL
+                    'thumbnail' => asset('storage/'.$template->thumbnail), // full URL
+                    'file' => asset('storage/'.$template->file_path),     // full file URL
                     'expires_at' => $template->pivot->expires_at,
                 ];
             });
 
         return response()->json($templates);
     }
-
-
 
     public function download($templateId)
     {
@@ -45,7 +40,7 @@ class CustomerTemplateController extends Controller
 
         $path = $template->file_path;
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (! Storage::disk('private')->exists($path)) {
             return response()->json(['message' => 'File not found'], 404);
         }
 
@@ -70,6 +65,4 @@ class CustomerTemplateController extends Controller
             'Content-Type' => $mimeType,
         ]);
     }
-
-
 }

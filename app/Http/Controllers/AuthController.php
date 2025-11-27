@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -40,7 +39,7 @@ class AuthController extends Controller
             ->where('token_expires_at', '>', now())
             ->first();
 
-        if (!$customer) {
+        if (! $customer) {
             return response()->json(['message' => 'Invalid or expired OTP'], 401);
         }
 

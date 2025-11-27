@@ -8,21 +8,14 @@ return [
         '%s%s%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:3000,127.0.0.1:8000,::1',
         Sanctum::currentApplicationUrlWithPort(),
-        env('FRONTEND_URL') ? ',' . parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
+        env('FRONTEND_URL') ? ','.parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
     ))),
-
-
 
     'guard' => [],
 
-
     'expiration' => null,
 
-
-
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
-
-
 
     'middleware' => [
         'authenticate_session' => Laravel\Sanctum\Http\Middleware\AuthenticateSession::class,

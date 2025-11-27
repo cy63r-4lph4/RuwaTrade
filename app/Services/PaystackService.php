@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 
 class PaystackService
 {
-    protected $baseUrl = "https://api.paystack.co";
+    protected $baseUrl = 'https://api.paystack.co';
 
     public function initializeTransaction($data)
     {

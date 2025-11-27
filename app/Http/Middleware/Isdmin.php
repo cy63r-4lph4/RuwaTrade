@@ -12,19 +12,10 @@ class IsAdmin
     {
         $user = $request->user();
 
-        if (!$user || !$user instanceof \App\Models\Admin) {
+        if (! $user || ! $user instanceof \App\Models\Admin) {
             return response()->json(['message' => 'Unauthorized - Admins only.'], 403);
         }
 
         return $next($request);
     }
 }
-
-
-
-
-
-
-
-
-

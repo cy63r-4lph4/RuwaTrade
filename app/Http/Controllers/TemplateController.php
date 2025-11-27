@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Template;
-use App\Models\TemplateImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -11,8 +10,6 @@ use Illuminate\Support\Str;
 
 class TemplateController extends Controller
 {
-
-
     public function index(Request $request)
     {
         $perPage = $request->input('per_page', 10);
@@ -20,11 +17,12 @@ class TemplateController extends Controller
         $templates = Template::with('images')->paginate($perPage);
 
         $templates->transform(function ($template) {
-            $template->thumbnail = asset('storage/' . $template->thumbnail);
+            $template->thumbnail = asset('storage/'.$template->thumbnail);
 
             if ($template->images) {
                 $template->images->transform(function ($img) {
-                    $img->path = asset('storage/' . $img->path);
+                    $img->path = asset('storage/'.$img->path);
+
                     return $img;
                 });
             }
@@ -32,7 +30,7 @@ class TemplateController extends Controller
             $template->images->transform(function ($img) {
                 return [
                     'id' => $img->id,
-                    'url' => asset('storage/' . $img->thumbnail),   // Absolute URL
+                    'url' => asset('storage/'.$img->thumbnail),   // Absolute URL
                     'path' => $img->path,                // Relative path for updates
                 ];
             });
@@ -43,8 +41,6 @@ class TemplateController extends Controller
         return response()->json($templates);
     }
 
-
-
     public function fetch()
     {
 
@@ -53,11 +49,12 @@ class TemplateController extends Controller
             ->get();
 
         $templates->transform(function ($template) {
-            $template->thumbnail = asset('storage/' . $template->thumbnail);
+            $template->thumbnail = asset('storage/'.$template->thumbnail);
 
             if ($template->images) {
                 $template->images->transform(function ($img) {
-                    $img->path = asset('storage/' . $img->path);
+                    $img->path = asset('storage/'.$img->path);
+
                     return $img;
                 });
             }
@@ -65,32 +62,34 @@ class TemplateController extends Controller
             return $template;
         });
 
-
         return $templates;
     }
+
     public function fetchById($id)
     {
         $template = Template::with('images')
             ->select('id', 'title', 'category', 'price', 'thumbnail', 'description')
             ->find($id);
 
-        if (!$template) {
+        if (! $template) {
             return response()->json(['message' => 'Template not found'], 404);
         }
 
         // Format the thumbnail path
-        $template->thumbnail = asset('storage/' . $template->thumbnail);
+        $template->thumbnail = asset('storage/'.$template->thumbnail);
 
         // Format image paths
         if ($template->images) {
             $template->images->transform(function ($img) {
-                $img->path = asset('storage/' . $img->path);
+                $img->path = asset('storage/'.$img->path);
+
                 return $img;
             });
         }
 
         return response()->json($template);
     }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -112,7 +111,7 @@ class TemplateController extends Controller
             'title',
             'category',
             'price',
-            'description'
+            'description',
         ]));
 
         if ($request->hasFile('thumbnail')) {
@@ -135,18 +134,15 @@ class TemplateController extends Controller
 
         return response()->json([
             'message' => 'Template created successfully',
-            'template' => $template->load('images')
+            'template' => $template->load('images'),
         ]);
     }
-
-
-
 
     public function update(Request $request, $id)
     {
         $template = Template::with('images')->find($id);
 
-        if (!$template) {
+        if (! $template) {
             return response()->json(['error' => 'Template not found'], 404);
         }
 
@@ -169,7 +165,7 @@ class TemplateController extends Controller
             'title',
             'category',
             'price',
-            'description'
+            'description',
         ]));
 
         // Handle file
@@ -186,7 +182,7 @@ class TemplateController extends Controller
             $thumbnailPath = self::stripStorageUrl($thumbnailInput);
             $template->thumbnail = $thumbnailPath;
         } elseif ($request->hasFile('thumbnail')) {
-            if ($template->thumbnail && !$template->images->contains('path', $template->thumbnail)) {
+            if ($template->thumbnail && ! $template->images->contains('path', $template->thumbnail)) {
                 Storage::disk('public')->delete($template->thumbnail);
             }
             $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
@@ -211,7 +207,7 @@ class TemplateController extends Controller
 
             foreach ($orderedInputs as $index => $entry) {
                 // Existing image URL
-                if (Str::startsWith($entry, asset('storage') . '/')) {
+                if (Str::startsWith($entry, asset('storage').'/')) {
                     $path = self::stripStorageUrl($entry);
 
                     // 🛑 Skip if this image is now the thumbnail
@@ -226,7 +222,7 @@ class TemplateController extends Controller
                 // Uploaded image blob (match by order)
                 elseif (Str::startsWith($entry, 'blob:')) {
                     foreach ($uploadedFiles as $uploadIndex => $file) {
-                        if (!in_array($uploadIndex, $usedUploads) && $file instanceof \Illuminate\Http\UploadedFile) {
+                        if (! in_array($uploadIndex, $usedUploads) && $file instanceof \Illuminate\Http\UploadedFile) {
                             $path = $file->store('template_images', 'public');
 
                             // 🛑 Skip if this file was saved as the thumbnail
@@ -245,22 +241,23 @@ class TemplateController extends Controller
 
             // Cleanup: Delete old files not reused and not set as thumbnail
             foreach ($existingImagePaths as $oldPath) {
-                if (!in_array($oldPath, $newPaths) && $oldPath !== $thumbnailPathRaw) {
+                if (! in_array($oldPath, $newPaths) && $oldPath !== $thumbnailPathRaw) {
                     Storage::disk('public')->delete($oldPath);
                 }
             }
         }
 
         // Return with absolute/public URLs
-        $template->thumbnail = asset('storage/' . $template->thumbnail);
+        $template->thumbnail = asset('storage/'.$template->thumbnail);
         $template->images->transform(function ($img) {
-            $img->path = asset('storage/' . $img->path);
+            $img->path = asset('storage/'.$img->path);
+
             return $img;
         });
 
         return response()->json([
             'message' => 'Template updated successfully',
-            'template' => $template->load('images')
+            'template' => $template->load('images'),
         ]);
     }
 
@@ -269,17 +266,16 @@ class TemplateController extends Controller
      */
     private static function stripStorageUrl($url): string
     {
-        $prefix = asset('storage') . '/';
+        $prefix = asset('storage').'/';
+
         return Str::startsWith($url, $prefix) ? Str::after($url, $prefix) : $url;
     }
-
-
 
     public function destroy($id)
     {
         $template = Template::with('images')->find($id);
 
-        if (!$template) {
+        if (! $template) {
             return response()->json(['error' => 'Template not found'], 404);
         }
 

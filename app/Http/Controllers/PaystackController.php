@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\PaystackService;
+use App\Models\Cart;
 use App\Models\Customer;
 use App\Models\Transaction;
+use App\Services\PaystackService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Models\Cart;
 
 class PaystackController extends Controller
 {
@@ -32,15 +33,11 @@ class PaystackController extends Controller
         return $this->paystack->initializeTransaction($data);
     }
 
-
-
-
-
     public function verify($reference)
     {
         $response = $this->paystack->verifyTransaction($reference);
 
-        if (!isset($response['data']) || $response['data']['status'] !== 'success') {
+        if (! isset($response['data']) || $response['data']['status'] !== 'success') {
             return response()->json(['status' => false, 'message' => 'Payment verification failed']);
         }
 
@@ -49,7 +46,7 @@ class PaystackController extends Controller
 
         $customer = Customer::where('email', $email)->first();
 
-        if (!$customer) {
+        if (! $customer) {
             return response()->json(['status' => false, 'message' => 'Customer not found']);
         }
 
@@ -77,6 +74,4 @@ class PaystackController extends Controller
 
         return response()->json(['status' => true, 'message' => 'Payment verified. Templates added to library.']);
     }
-
-
 }

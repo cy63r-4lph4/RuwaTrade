@@ -13,4 +13,3 @@ class TemplateImage extends Model
         return $this->belongsTo(Template::class);
     }
 }
-

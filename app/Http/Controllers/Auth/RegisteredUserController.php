@@ -4,42 +4,47 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use App\Services\OtpService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Http\Request;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-  public function store(Request $request): Response
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'role' => ['required', 'in:customer,seller'], // only allow these roles
-    ]);
+    protected OtpService $otpService;
 
-    $user = User::create([
-        'uuid' => (string) \Illuminate\Support\Str::uuid(), // add UUID
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => $request->role,
-    ]);
+    public function __construct(OtpService $otpService)
+    {
+        $this->otpService = $otpService;
+    }
 
-    event(new Registered($user));
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:customer,seller'],
+        ]);
 
-    Auth::login($user);
+        $user = User::create([
+            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'is_verified' => false,
+        ]);
 
-    return response()->noContent();
+        // Send OTP using the service
+        $otpResult = $this->otpService->sendEmailOtp($user);
+
+        return response()->json([
+            'message' => 'User created. Check email for OTP.',
+            'otp_status' => $otpResult['status'],
+            'otp_message' => $otpResult['message'],
+            'email' => $user->email,
+        ], 201);
+    }
 }
 
-}

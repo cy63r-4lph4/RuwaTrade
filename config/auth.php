@@ -2,13 +2,10 @@
 
 return [
 
-
-
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'api'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'customers'),
     ],
-
 
     'guards' => [
         'admin' => [
@@ -20,8 +17,6 @@ return [
             'provider' => 'customers',
         ],
     ],
-
-
 
     'providers' => [
 
@@ -35,7 +30,6 @@ return [
         ],
     ],
 
-
     'passwords' => [
         'users' => [
             'provider' => 'users',
@@ -44,8 +38,6 @@ return [
             'throttle' => 60,
         ],
     ],
-
-
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
