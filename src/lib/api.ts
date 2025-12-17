@@ -33,7 +33,7 @@ api.interceptors.response.use(
   }
 );
 
-export const authApi = (path: string) => `/api/auth${path}`;
+export const authApi = (path: string) => `/auth${path}`;
 export const apiRoute = (path: string) => `/api${path}`;
 export async function downloadTemplate(templateId: number) {
   const response = await api.get(apiRoute(`/download/${templateId}`), {
