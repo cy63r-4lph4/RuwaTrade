@@ -8,21 +8,16 @@ use App\Services\OtpService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
+use App\Enums\OtpType;
 
 class RegisteredUserController extends Controller
-{
-    protected OtpService $otpService;
-
-    public function __construct(OtpService $otpService)
-    {
-        $this->otpService = $otpService;
-    }
+{    protected OtpService $otpService;
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:customer,seller'],
         ]);
@@ -36,15 +31,14 @@ class RegisteredUserController extends Controller
             'is_verified' => false,
         ]);
 
-        // Send OTP using the service
-        $otpResult = $this->otpService->sendEmailOtp($user);
+        $otpResult = $this->otpService->send($user, OtpType::EMAIL_VERIFICATION);
 
         return response()->json([
-            'message' => 'User created. Check email for OTP.',
+            'status' => 'success',
+            'message' => 'User created',
             'otp_status' => $otpResult['status'],
             'otp_message' => $otpResult['message'],
             'email' => $user->email,
         ], 201);
     }
 }
-
