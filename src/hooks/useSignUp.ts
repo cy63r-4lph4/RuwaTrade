@@ -1,4 +1,4 @@
-import { api, apiRoute, authApi } from "@/lib/api";
+import { api } from "@/lib/api";
 import axios from "axios";
 import { useState } from "react";
 
@@ -20,15 +20,12 @@ export const useSignUp = () => {
     name: string;
     role?: string;
   }) => {
-    if (password !== password_confirmation) {
-      setError("Passwords do not match");
-      return;
-    }
     setLoading(true);
     setError(null);
+    setSuccess(false);
 
     try {
-      const response = await api.post("/register", {
+      const { data } = await api.post("/register", {
         email,
         password,
         password_confirmation,
@@ -36,14 +33,20 @@ export const useSignUp = () => {
         role,
       });
 
+      if (data.otp_status !== "success") {
+        setError(data.otp_message || "Failed to send OTP");
+        return data;
+      }
+
       setSuccess(true);
-      setLoading(false);
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setError(error.response?.data || "Something went wrong");
+      return data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || err.response?.data || "Signup failed"
+        );
       } else {
-        setError("Something went wrong");
+        setError("Signup failed");
       }
     } finally {
       setLoading(false);
