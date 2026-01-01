@@ -51,7 +51,7 @@ function AppWrapper() {
         <Route path="/estore" element={<EStore />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/product" element={<ProductDetails />} />
+        <Route path="/product/[id]" element={<ProductDetails />} />
         <Route path="/cart" element={<CartPage />} />
 
         <Route path="/template/:id" element={<TemplateDetail />} />
