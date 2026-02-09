@@ -7,9 +7,15 @@ export { SellerStorefront } from "./SellerStoreFront";
 export {RegisterSeller} from "./RegisterSeller";
 export {Shop} from "./Shop";
 export {EStore} from "./EStore";
-export { ProfilePage } from "./Profile";
+export { ProfileLayout } from "./Profile";
 export { ProductDetails } from "./Details";
 export { CartPage } from "./Cart";
 export { SignIn } from "./SignIn";
 export { SignUp } from "./SignUp";
-
+export { OtpVerification } from "./OTP";
+export {Favorites} from "./profile/WishList";
+export {AccountSettings} from "./profile/AccountSettings";
+export { ProfileOverview } from "./profile/Overview";
+export { OrderHistory } from "./profile/OrderHistory";
+export { DigitalLibrary } from "./profile/DigitalLibrary";
+export {OrderTracking} from "./profile/Tracker";

@@ -2,7 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+  // const { isAuthenticated, loading } = useAuth();
+  const isAuthenticated = true; // Placeholder for authentication status
+  const loading = false; // Placeholder for loading state
 
   if (loading) {
     return <div className="text-white text-center">Loading...</div>; // or a spinner

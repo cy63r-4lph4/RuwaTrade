@@ -1,8 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { FaArrowRight, FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useSignUp } from "@/hooks/useSignUp";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
 
 export function SignUp() {
   const navigate = useNavigate();
@@ -109,11 +111,77 @@ export function SignUp() {
   };
 
   // ------------------------------------------------------------
-  // UI (unchanged)
+  // UI
   // ------------------------------------------------------------
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white px-4">
-      {/* UI unchanged */}
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 bg-white">
+      {/* FORM SIDE */}
+      <div className="flex items-center justify-center p-8 md:p-16">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }} 
+          animate={{ opacity: 1, x: 0 }} 
+          className="w-full max-w-md space-y-10"
+        >
+          <div>
+            <span className="text-indigo-600 font-black uppercase tracking-widest text-xs">Join the Community</span>
+            <h1 className="text-5xl font-black tracking-tighter mt-2">Sign Up<span className="text-gray-200">.</span></h1>
+          </div>
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
+             {/* Reusing a styled version of your Input component */}
+             <div className="grid grid-cols-1 gap-5">
+               <Input label="Full Name" name="fullName" value={form.fullName} onChange={handleChange} placeholder="John Doe" />
+               <Input label="Email Address" name="email" value={form.email} onChange={handleChange} placeholder="john@example.com" />
+               <div className="grid grid-cols-2 gap-4">
+                  <Input label="Password" type="password" name="password" value={form.password} onChange={handleChange} />
+                  <Input label="Confirm" type="password" name="confirmPassword" value={form.confirmPassword} onChange={handleChange} />
+               </div>
+             </div>
+
+             <button
+                disabled={loading}
+                className="w-full bg-gray-900 text-white py-6 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-indigo-600 transition-all shadow-xl"
+              >
+                {loading ? "CREATING..." : <>CREATE ACCOUNT <FaArrowRight /></>}
+              </button>
+          </form>
+
+          <p className="text-center font-bold text-gray-500">
+            Already a member? <Link to="/signin" className="text-indigo-600 font-black uppercase tracking-tighter border-b-2 border-indigo-600 ml-1">Sign In</Link>
+          </p>
+        </motion.div>
+      </div>
+
+      {/* BRAND SIDE */}
+      <div className="hidden lg:flex bg-indigo-600 p-16 flex-col justify-between text-white relative overflow-hidden">
+         <div className="relative z-10">
+          <Link to="/" className="text-3xl font-black tracking-tighter text-white">RuwaTrade<span className="text-gray-900">.</span></Link>
+          <h2 className="text-7xl font-black tracking-tighter leading-tight mt-20">
+            START <br /><span className="text-gray-900 italic">YOUR</span> <br />JOURNEY.
+          </h2>
+        </div>
+        <div className="relative z-10 p-8 bg-white/10 backdrop-blur-xl rounded-[2rem] border border-white/20">
+            <p className="text-xs font-black uppercase tracking-widest mb-4">Why RuwaTrade?</p>
+            <ul className="space-y-3 text-sm font-bold opacity-80">
+                <li className="flex items-center gap-2">✓ Verified Premium Sellers</li>
+                <li className="flex items-center gap-2">✓ Instant Digital Delivery</li>
+                <li className="flex items-center gap-2">✓ Global Shipping Network</li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Updated Styled Input Component
+function Input({ label, ...props }: any) {
+  return (
+    <div className="space-y-1">
+      <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">{label}</label>
+      <input
+        {...props}
+        className="w-full border-b-2 border-gray-100 focus:border-indigo-600 outline-none text-lg font-bold bg-transparent py-3 transition-colors"
+      />
     </div>
   );
 }

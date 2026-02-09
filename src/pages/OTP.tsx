@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useVerifyOtp } from "@/hooks/useVerifyOtp";
 import { useResendOtp } from "@/hooks/useResendOtp";
+import { motion } from "framer-motion";
 
 export function OtpVerification() {
   const navigate = useNavigate();
@@ -129,57 +130,54 @@ export function OtpVerification() {
   // ------------------------------------------------------------
   // UI
   // ------------------------------------------------------------
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-white px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <div className="text-center">
-          <FaShieldAlt className="mx-auto text-indigo-600 text-4xl mb-3" />
-          <h2 className="text-3xl font-bold text-indigo-600">Verify OTP</h2>
-          <p className="text-gray-500 mt-2">
-            Enter the code sent to <span className="font-medium">{email}</span>
-          </p>
+return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }} 
+        animate={{ opacity: 1, scale: 1 }}
+        className="w-full max-w-lg text-center space-y-10"
+      >
+        <div className="space-y-4">
+            <div className="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto">
+                <FaShieldAlt size={32} />
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter">Security Check<span className="text-indigo-600">.</span></h1>
+            <p className="text-gray-500 font-bold max-w-xs mx-auto">
+              We've sent a 6-digit code to <br /><span className="text-gray-900">{email}</span>
+            </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex justify-between gap-2">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="flex justify-center gap-3">
             {otp.map((digit, i) => (
               <input
-                ref={i === 0 ? firstInputRef : undefined}
                 key={i}
                 id={`otp-${i}`}
                 maxLength={1}
-                inputMode="numeric"
-                className="w-12 h-12 text-center border rounded-lg text-lg font-semibold focus:ring-2 focus:ring-indigo-600 outline-none"
+                className="w-14 h-18 text-center border-2 border-gray-100 rounded-2xl text-3xl font-black focus:border-indigo-600 focus:ring-4 focus:ring-indigo-50 outline-none transition-all"
                 value={digit}
                 onChange={(e) => handleChange(e.target.value, i)}
-                onPaste={(e) => handlePaste(e, i)}
               />
             ))}
           </div>
 
           <button
             disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg font-medium hover:bg-indigo-700"
+            className="w-full max-w-sm bg-gray-900 text-white py-6 rounded-3xl font-black uppercase tracking-widest text-xs hover:bg-indigo-600 transition-all shadow-2xl shadow-gray-200"
           >
-            {loading ? "Verifying..." : "Verify"}
+            {loading ? "VERIFYING..." : "CONFIRM ACCESS"}
           </button>
         </form>
 
-        <div className="text-center text-sm text-gray-500">
-          Didn’t receive code?{" "}
-          <button
-            onClick={handleResend}
-            disabled={cooldown > 0 || resendLoading}
-            className="text-indigo-600 hover:underline disabled:opacity-50"
-          >
-            {resendLoading
-              ? "Sending..."
-              : cooldown > 0
-              ? `Wait ${cooldown}s`
-              : "Resend"}
-          </button>
+        <div className="pt-10 border-t border-gray-50">
+           <p className="text-sm font-bold text-gray-400">
+             Didn't get it? 
+             <button onClick={handleResend} className="ml-2 text-indigo-600 font-black uppercase tracking-tighter hover:underline">
+               Resend Code
+             </button>
+           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
